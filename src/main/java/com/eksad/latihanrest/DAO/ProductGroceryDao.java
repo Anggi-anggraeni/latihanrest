@@ -1,9 +1,16 @@
 package com.eksad.latihanrest.DAO;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.eksad.latihanrest.model.ProductGrocery;
 
-public interface ProductGroceryDao extends CrudRepository<ProductGrocery, Long>{
-
+@RepositoryRestResource(path = "groceries")
+public interface ProductGroceryDao extends CrudRepository<ProductGrocery, Long>
+{
+	public List<ProductGrocery> findByName(@Param("name") String Name);
+	public List<ProductGrocery> findByBrandName(@Param("brandName")String brandName);
 }
