@@ -5,7 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,18 +20,27 @@ import com.eksad.latihanrest.DAO.ProductDao;
 import com.eksad.latihanrest.model.Brand;
 import com.eksad.latihanrest.model.Product;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 
 @RestController
-@RequestMapping("product")
+@RequestMapping(value = "/api/v1")
+@Api(tags = "Product")
 public class ProductController
 {
 	@Autowired
-	ProductDao productDao;
+	private ProductDao productDao;
 	
 	@Autowired
 	BrandDao brandDao;
 	
-	@RequestMapping("getByBrandId/{brandId}")
+	@ApiOperation(
+			value = "API to retrieve all product's data by id",
+			notes = "Return data with JSON format",
+			tags = "Get Data API"
+			)
+	@GetMapping(value = "product/{brandId}")
 	public List<Product> getByBrandId(@PathVariable Long brandId)
 	{
 		List<Product> result = new ArrayList<Product>();
@@ -35,8 +48,14 @@ public class ProductController
 		return result;
 	}
 	
-	@RequestMapping(value="save",method = RequestMethod.POST)
-	public Product save(@RequestBody Product product)
+	
+	@ApiOperation(
+			value = "Add new product data",
+			notes = "Add new product data to database",
+			tags = "Data Manipulation API"
+			)
+	@PostMapping(value = "/product")
+	public Product InsertProduct(@RequestBody Product product)
 	{
 		Brand brand = brandDao.findById(product.getBrandId()).orElse(null);
 		if (brand != null)
@@ -47,8 +66,14 @@ public class ProductController
 		return null;
 	}
 	
-	@RequestMapping(value="update/{id}",method = RequestMethod.PUT)
-	public String update(@RequestBody Product product,@PathVariable Long id)
+	
+	@ApiOperation(
+			value = "Update product data",
+			notes = "Update product data based on provided ID and attached data",
+			tags = "Data Manipulation API"
+			)
+	@PutMapping(value = "/product/{id}")
+	public String updateProduct(@RequestBody Product product,@PathVariable Long id)
 	{
 		Product productSelected = productDao.findById((id)).orElse(null);
 		if (productSelected != null)
@@ -64,7 +89,12 @@ public class ProductController
 		}
 	}
 	
-	@RequestMapping(value ="delete/{id}", method = RequestMethod.DELETE)
+	@ApiOperation(
+			value = "Delete product data",
+			notes = "Delete product data based on provided ID and attached data",
+			tags = "Data Manipulation API"
+			)
+	@DeleteMapping(value = "/product/{id}")
 	public HashMap<String, Object> delete(@PathVariable Long id)
 	{
 		HashMap<String, Object> result = new HashMap<String, Object>();
@@ -73,7 +103,12 @@ public class ProductController
 		return result;
 	}
 	
-	@RequestMapping("getBySearch/{search}")
+	@ApiOperation(
+			value = "API to retrieve all division's data by id",
+			notes = "Return data with JSON format",
+			tags = "Get Data API"
+			)
+	@GetMapping(value = "/product/{search}")
 	public List<Product> getBySearch(@PathVariable String search)
 	{
 		List<Product> result = new ArrayList<Product>();
